@@ -34,4 +34,39 @@ export interface Mensagem {
     emoji: string;
     quantidade: number;
   }>;
+}
+
+export interface Cliente {
+  id: string;
+  avatar_url: string | null;
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  data_nascimento: string;
+  sexo: 'M' | 'F';
+  cep: string;
+  endereco: string;
+  numero: string;
+  bairro: string;
+  observacoes: string | null;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClienteFormData {
+  avatar_url?: string | null;
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  data_nascimento: string;
+  sexo: 'M' | 'F';
+  cep: string;
+  endereco: string;
+  numero: string;
+  bairro: string;
+  observacoes?: string;
+  ativo: boolean;
 } 

@@ -7,7 +7,9 @@ import Swal from 'sweetalert2'
 import './App.css'
 import { EditarPerfil } from './pages/EditarPerfil'
 import { Principal } from './pages/Principal'
+import { Clientes } from './pages/Clientes'
 import { Menus } from './pages/layouts/Menus'
+import { EditarCliente } from './pages/EditarCliente'
 
 function Login() {
   const navigate = useNavigate();
@@ -256,6 +258,9 @@ function App() {
           <Route path="/dashboard" element={<Principal />} />
           <Route path="/perfil" element={<EditarPerfil />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/clientes/novo" element={<EditarCliente />} />
+          <Route path="/clientes/:id" element={<EditarCliente />} />
         </Route>
       </Routes>
     </BrowserRouter>
