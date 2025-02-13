@@ -1,4 +1,4 @@
-import { useState, FormEvent, useEffect } from 'react'
+import { useState, FormEvent } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { Chat } from './pages/Chat'
 import { authService } from './services/auth'
@@ -74,6 +74,14 @@ function Login() {
         const { user, error } = await authService.signUp({ email, password, nome });
         if (error) throw error;
         if (user) {
+          // Limpar formulário
+          setIsLogin(true);
+          setEmail('');
+          setPassword('');
+          setNome('');
+          setConfirmPassword('');
+
+          // Mostrar modal de sucesso
           await Swal.fire({
             icon: 'success',
             title: 'Cadastro realizado com sucesso!',
@@ -86,23 +94,16 @@ function Login() {
             confirmButtonColor: '#00a884',
             allowOutsideClick: false
           });
-          
-          // Limpar formulário e voltar para login
-          setIsLogin(true);
-          setEmail('');
-          setPassword('');
-          setNome('');
-          setConfirmPassword('');
         }
       }
     } catch (err: any) {
-      console.error(err);
-      setError(err.message);
+      setError(err.message || 'Ocorreu um erro. Tente novamente.');
       
+      // Mostrar modal de erro
       await Swal.fire({
         icon: 'error',
         title: 'Ops! Algo deu errado',
-        text: err.message,
+        text: err.message || 'Ocorreu um erro. Tente novamente.',
         confirmButtonColor: '#00a884'
       });
     } finally {
@@ -240,48 +241,12 @@ function Login() {
   );
 }
 
-// Adicione este hook de proteção de rota
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  async function checkAuth() {
-    try {
-      const session = await authService.getSession();
-      if (!session) {
-        navigate('/login');
-      }
-    } catch (error) {
-      navigate('/login');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
-
-  return <>{children}</>;
-}
-
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/chat"
-          element={
-            <ProtectedRoute>
-              <Chat />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

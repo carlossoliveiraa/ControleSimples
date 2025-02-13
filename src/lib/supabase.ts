@@ -3,27 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
-
-console.log('Variáveis de ambiente:', {
-  url: import.meta.env.VITE_SUPABASE_URL,
-  key: import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 10) + '...' // Mostra apenas o início da chave por segurança
-});
-
-if (!supabaseUrl) {
-  throw new Error('VITE_SUPABASE_URL não está definida');
-}
-
-if (!supabaseAnonKey) {
-  throw new Error('VITE_SUPABASE_ANON_KEY não está definida');
-}
-
-// Validar se a URL é válida
-try {
-  new URL(supabaseUrl);
-} catch (error) {
-  throw new Error('VITE_SUPABASE_URL não é uma URL válida');
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase URL and Anon Key são necessários.');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

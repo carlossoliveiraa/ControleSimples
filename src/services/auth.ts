@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
-import type { Usuario } from '../lib/supabase';
 import { AuthError } from '@supabase/supabase-js';
+import type { Usuario } from '../lib/supabase';
 
 export interface SignUpData {
   email: string;
@@ -16,64 +16,110 @@ export interface SignInData {
 export const authService = {
   async signUp({ email, password, nome }: SignUpData) {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      console.log('Iniciando cadastro:', { email, nome });
+
+      // Primeiro, criar o usuário na autenticação
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             nome: nome,
-            avatar_url: null,
-            status: 'offline',
           },
         },
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
 
-      // Se o cadastro foi bem sucedido, criar o perfil do usuário
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: email,
-              nome: nome,
-              status: 'offline',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            },
-          ]);
-
-        if (profileError) throw profileError;
+      if (!authData.user) {
+        throw new Error('Erro ao criar usuário');
       }
 
-      return { user: data.user, error: null };
+      console.log('Usuário criado na auth:', authData.user);
+
+      // Depois, criar o registro na tabela de usuários
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .insert([
+          {
+            id: authData.user.id,
+            email: email,
+            nome: nome,
+            status: 'offline',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            configuracoes: {
+              notificacoes: true,
+              tema: 'light',
+              idioma: 'pt-BR'
+            }
+          }
+        ])
+        .select()
+        .single();
+
+      if (userError) {
+        console.error('Erro ao criar perfil:', userError);
+        // Tentar reverter a criação do usuário na auth
+        await supabase.auth.signOut();
+        throw new Error('Erro ao criar perfil do usuário');
+      }
+
+      console.log('Perfil criado com sucesso:', userData);
+
+      return { 
+        user: authData.user, 
+        error: null,
+        confirmEmail: authData.user.confirmation_sent_at !== null 
+      };
+
     } catch (error) {
-      console.error('Erro no cadastro:', error);
+      console.error('Erro completo no cadastro:', error);
       if (error instanceof AuthError) {
         throw new Error(this.tratarErroAuth(error.message));
       }
-      throw new Error('Ocorreu um erro ao criar a conta. Tente novamente.');
+      throw error;
     }
+  },
+
+  tratarErroAuth(message: string): string {
+    const erros: { [key: string]: string } = {
+      'Invalid login credentials': 'Email ou senha inválidos',
+      'Email not confirmed': 'Email não confirmado. Por favor, verifique sua caixa de entrada',
+      'User already registered': 'Este email já está cadastrado',
+      'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres',
+      'Invalid email': 'Email inválido',
+    };
+
+    return erros[message] || 'Ocorreu um erro na autenticação';
   },
 
   async signIn({ email, password }: SignInData) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
 
-      return { user: data.user, error: null };
+      if (authData.user) {
+        // Atualizar status e último acesso
+        const { error: updateError } = await supabase
+          .from('usuarios')
+          .update({
+            status: 'online',
+            ultimo_acesso: new Date().toISOString(),
+          })
+          .eq('id', authData.user.id);
+
+        if (updateError) throw updateError;
+      }
+
+      return { user: authData.user, error: null };
     } catch (error) {
       console.error('Erro no login:', error);
-      if (error instanceof AuthError) {
-        throw new Error(this.tratarErroAuth(error.message));
-      }
-      throw new Error('Ocorreu um erro ao fazer login. Tente novamente.');
+      return { user: null, error };
     }
   },
 
@@ -81,20 +127,10 @@ export const authService = {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      return { error: null };
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-      throw new Error('Ocorreu um erro ao fazer logout. Tente novamente.');
-    }
-  },
-
-  async getSession() {
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return session;
-    } catch (error) {
-      console.error('Erro ao obter sessão:', error);
-      return null;
+      console.error('Erro ao sair:', error);
+      return { error };
     }
   },
 
@@ -119,21 +155,5 @@ export const authService = {
       console.error('Erro ao obter usuário:', error);
       return { user: null, error };
     }
-  },
-
-  tratarErroAuth(message: string): string {
-    const erros: { [key: string]: string } = {
-      'Invalid login credentials': 'Email ou senha inválidos',
-      'Email not confirmed': 'Email não confirmado. Por favor, verifique sua caixa de entrada',
-      'User already registered': 'Este email já está cadastrado',
-      'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres',
-      'Invalid email': 'Email inválido',
-      'Unable to validate email address: invalid format': 'Formato de email inválido',
-      'Email rate limit exceeded': 'Muitas tentativas. Tente novamente mais tarde',
-      'Password is too weak': 'A senha é muito fraca. Use uma combinação de letras, números e símbolos',
-      'Email already taken': 'Este email já está em uso',
-    };
-
-    return erros[message] || 'Ocorreu um erro na autenticação. Tente novamente.';
   }
 }; 
