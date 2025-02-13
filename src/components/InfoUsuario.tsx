@@ -145,35 +145,62 @@ export function InfoUsuario({
 
     try {
       setIsUpdatingAvatar(true);
-
       const { publicUrl, error } = await authService.updateAvatar(userId, file);
       
       if (error) throw error;
-
       if (publicUrl) {
-        onAvatarUpdate?.(publicUrl);
-        await Swal.fire({
-          icon: 'success',
-          title: 'Sucesso!',
-          text: 'Sua foto de perfil foi atualizada.',
-          confirmButtonColor: '#00a884',
-          timer: 3000,
-          timerProgressBar: true
-        });
+        onAvatarUpdate(publicUrl);
       }
     } catch (error: any) {
       console.error('Erro ao atualizar avatar:', error);
-      await Swal.fire({
+      Swal.fire({
         icon: 'error',
-        title: 'Ops! Algo deu errado',
-        text: error.message || 'Erro ao atualizar a foto de perfil.',
-        confirmButtonColor: '#00a884'
+        title: 'Erro ao atualizar avatar',
+        text: error.message || 'Por favor, tente novamente.',
       });
     } finally {
       setIsUpdatingAvatar(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Remover foto?',
+        text: 'Tem certeza que deseja remover sua foto de perfil?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#00a884',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, remover',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (result.isConfirmed) {
+        setIsUpdatingAvatar(true);
+        const { error } = await authService.removeAvatar(userId);
+        
+        if (error) throw error;
+        
+        onAvatarUpdate(null);
+        
+        await Swal.fire({
+          icon: 'success',
+          title: 'Foto removida!',
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
       }
+    } catch (error: any) {
+      console.error('Erro ao remover avatar:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao remover foto',
+        text: error.message || 'Por favor, tente novamente.',
+      });
+    } finally {
+      setIsUpdatingAvatar(false);
     }
   };
 
@@ -188,18 +215,47 @@ export function InfoUsuario({
         onChange={handleFileChange}
       />
 
-      {/* Avatar */}
-      <div className="flex-shrink-0 relative">
+      {/* Avatar com menu de contexto */}
+      <div className="flex-shrink-0 relative group">
         {avatar ? (
-          <img
-            src={avatar}
-            alt="Seu perfil"
-            className={`w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 ${
-              isUpdatingAvatar ? 'opacity-50' : ''
-            }`}
-            onClick={handleAvatarClick}
-            title="Clique para alterar sua foto"
-          />
+          <>
+            <img
+              src={avatar}
+              alt="Seu perfil"
+              className={`w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 ${
+                isUpdatingAvatar ? 'opacity-50' : ''
+              }`}
+              onClick={handleAvatarClick}
+              title="Clique para alterar sua foto"
+            />
+            {/* Menu de opções do avatar */}
+            <div className="absolute hidden group-hover:flex -bottom-2 -right-2 gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAvatarClick();
+                }}
+                className="bg-white rounded-full p-1 shadow-md hover:bg-gray-50"
+                title="Alterar foto"
+              >
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveAvatar();
+                }}
+                className="bg-white rounded-full p-1 shadow-md hover:bg-gray-50"
+                title="Remover foto"
+              >
+                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </>
         ) : (
           <div 
             className={`w-12 h-12 rounded-full bg-[#00a884] flex items-center justify-center cursor-pointer hover:opacity-80 ${

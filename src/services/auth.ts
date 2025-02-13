@@ -215,56 +215,17 @@ export const authService = {
 
   async updateAvatar(userId: string, file: File) {
     try {
-      // Validar o tipo do arquivo
-      if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        throw new Error('Apenas imagens JPG e PNG são permitidas.');
-      }
-
-      // Validar o tamanho do arquivo (1MB = 1024 * 1024 bytes)
-      if (file.size > 1024 * 1024) {
-        throw new Error('A imagem deve ter no máximo 1MB.');
-      }
-
-      // Primeiro, deletar avatar antigo se existir
-      const { data: oldUser } = await supabase
-        .from('usuarios')
-        .select('avatar_url')
-        .eq('id', userId)
-        .single();
-
-      if (oldUser?.avatar_url) {
-        try {
-          // Extrair o caminho do arquivo da URL
-          const urlParts = oldUser.avatar_url.split('/avatars/');
-          if (urlParts.length > 1) {
-            const oldFilePath = `avatars/${urlParts[1]}`;
-            console.log('Deletando arquivo antigo:', oldFilePath);
-            
-            const { error: deleteError } = await supabase.storage
-              .from('avatars')
-              .remove([oldFilePath]);
-
-            if (deleteError) {
-              console.error('Erro ao deletar arquivo antigo:', deleteError);
-            }
-          }
-        } catch (deleteError) {
-          console.error('Erro ao tentar deletar arquivo antigo:', deleteError);
-          // Continua com o upload mesmo se falhar ao deletar o arquivo antigo
-        }
-      }
-
-      // Gerar um nome único para o arquivo
+      // Gerar nome único para o arquivo
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${userId}/${fileName}`;
+      const fileName = `${userId}/${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
 
-      // Upload do arquivo para o storage
+      // Upload do arquivo
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: true
         });
 
       if (uploadError) throw uploadError;
@@ -273,6 +234,22 @@ export const authService = {
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
+
+      // Deletar avatar antigo se existir
+      const { data: userData } = await supabase
+        .from('usuarios')
+        .select('avatar_url')
+        .eq('id', userId)
+        .single();
+
+      if (userData?.avatar_url) {
+        const oldPath = userData.avatar_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([`${userId}/${oldPath}`]);
+        }
+      }
 
       // Atualizar a URL do avatar no perfil do usuário
       const { error: updateError } = await supabase
@@ -285,7 +262,10 @@ export const authService = {
       return { publicUrl, error: null };
     } catch (error: any) {
       console.error('Erro ao atualizar avatar:', error);
-      return { publicUrl: null, error };
+      return { 
+        publicUrl: null, 
+        error: new Error(error.message || 'Erro ao atualizar avatar. Por favor, tente novamente.')
+      };
     }
   },
 
@@ -306,6 +286,44 @@ export const authService = {
       return { 
         user: null, 
         error: new Error(error.message || 'Erro ao atualizar nome. Por favor, tente novamente.')
+      };
+    }
+  },
+
+  async removeAvatar(userId: string) {
+    try {
+      // Buscar URL atual do avatar
+      const { data: userData } = await supabase
+        .from('usuarios')
+        .select('avatar_url')
+        .eq('id', userId)
+        .single();
+
+      // Se tiver avatar, deletar do storage
+      if (userData?.avatar_url) {
+        const oldPath = userData.avatar_url.split('/').pop();
+        if (oldPath) {
+          const { error: deleteError } = await supabase.storage
+            .from('avatars')
+            .remove([`${userId}/${oldPath}`]);
+
+          if (deleteError) throw deleteError;
+        }
+      }
+
+      // Atualizar o perfil removendo a URL do avatar
+      const { error: updateError } = await supabase
+        .from('usuarios')
+        .update({ avatar_url: null })
+        .eq('id', userId);
+
+      if (updateError) throw updateError;
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Erro ao remover avatar:', error);
+      return { 
+        error: new Error(error.message || 'Erro ao remover foto de perfil. Por favor, tente novamente.')
       };
     }
   },
