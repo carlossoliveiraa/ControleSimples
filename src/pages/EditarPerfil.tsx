@@ -214,220 +214,223 @@ export function EditarPerfil() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm">
-          {/* Cabeçalho */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-gray-900">Editar Perfil</h1>
-              <button
-                onClick={() => navigate('/chat')}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="px-6">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <span className="text-xl font-semibold text-gray-800">Editar Perfil</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {/* ... header direito ... */}
             </div>
           </div>
-
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Coluna da Esquerda - Avatar */}
-              <div className="space-y-4">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-                <div className="flex flex-col items-center">
-                  <div className="relative group">
-                    {usuario?.avatar_url ? (
-                      <>
-                        <img
-                          src={usuario.avatar_url}
-                          alt="Seu perfil"
-                          className="w-32 h-32 rounded-full object-cover cursor-pointer hover:opacity-80"
-                          onClick={handleAvatarClick}
-                        />
-                        <div className="absolute hidden group-hover:flex -bottom-2 -right-2 gap-1">
-                          <button
-                            type="button"
-                            onClick={handleAvatarClick}
-                            className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
-                            title="Alterar foto"
-                          >
-                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleRemoveAvatar}
-                            className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
-                            title="Remover foto"
-                          >
-                            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <div 
-                        className="w-32 h-32 rounded-full bg-[#00a884] flex items-center justify-center cursor-pointer hover:opacity-80"
-                        onClick={handleAvatarClick}
-                      >
-                        <span className="text-white text-4xl font-semibold">
-                          {usuario?.nome.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    {isUpdatingAvatar && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full">
-                        <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                      </div>
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Clique na foto para alterar
-                  </p>
-                </div>
-              </div>
-
-              {/* Coluna da Direita - Formulário */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Nome */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome
-                  </label>
-                  <input
-                    type="text"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                {/* Email - Desabilitado */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    disabled
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500 cursor-not-allowed"
-                  />
-                </div>
-
-                {/* Telefone */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Telefone
-                  </label>
-                  <input
-                    type="tel"
-                    value={telefone}
-                    onChange={(e) => setTelefone(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    placeholder="+55 (11) 98765-4321"
-                  />
-                </div>
-
-                {/* Data de Nascimento */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Data de Nascimento
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <select
-                      value={dia}
-                      onChange={(e) => setDia(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    >
-                      <option value="">Dia</option>
-                      {dias.map(d => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={mes}
-                      onChange={(e) => setMes(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    >
-                      <option value="">Mês</option>
-                      {meses.map(m => (
-                        <option key={m.valor} value={m.valor}>
-                          {m.nome}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={ano}
-                      onChange={(e) => setAno(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    >
-                      <option value="">Ano</option>
-                      {anos.map(a => (
-                        <option key={a} value={a}>
-                          {a}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Descrição */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Descrição
-                  </label>
-                  <textarea
-                    value={descricao}
-                    onChange={(e) => setDescricao(e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
-                    placeholder="Fale um pouco sobre você..."
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Botões */}
-            <div className="mt-8 flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => navigate('/chat')}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className={`
-                  px-4 py-2 bg-[#00a884] text-white rounded-md hover:bg-[#008f6f] 
-                  focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:ring-offset-2
-                  ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}
-                `}
-              >
-                {isSaving ? 'Salvando...' : 'Salvar alterações'}
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm">
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Coluna da Esquerda - Avatar */}
+                <div className="space-y-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <div className="flex flex-col items-center">
+                    <div className="relative group">
+                      {usuario?.avatar_url ? (
+                        <>
+                          <img
+                            src={usuario.avatar_url}
+                            alt="Seu perfil"
+                            className="w-32 h-32 rounded-full object-cover cursor-pointer hover:opacity-80"
+                            onClick={handleAvatarClick}
+                          />
+                          <div className="absolute hidden group-hover:flex -bottom-2 -right-2 gap-1">
+                            <button
+                              type="button"
+                              onClick={handleAvatarClick}
+                              className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
+                              title="Alterar foto"
+                            >
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleRemoveAvatar}
+                              className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50"
+                              title="Remover foto"
+                            >
+                              <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <div 
+                          className="w-32 h-32 rounded-full bg-[#00a884] flex items-center justify-center cursor-pointer hover:opacity-80"
+                          onClick={handleAvatarClick}
+                        >
+                          <span className="text-white text-4xl font-semibold">
+                            {usuario?.nome.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      {isUpdatingAvatar && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full">
+                          <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Clique na foto para alterar
+                    </p>
+                  </div>
+                </div>
+
+                {/* Coluna da Direita - Formulário */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Nome */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nome
+                    </label>
+                    <input
+                      type="text"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Email - Desabilitado */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      disabled
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Telefone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Telefone
+                    </label>
+                    <input
+                      type="tel"
+                      value={telefone}
+                      onChange={(e) => setTelefone(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      placeholder="+55 (11) 98765-4321"
+                    />
+                  </div>
+
+                  {/* Data de Nascimento */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Data de Nascimento
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        value={dia}
+                        onChange={(e) => setDia(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      >
+                        <option value="">Dia</option>
+                        {dias.map(d => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        value={mes}
+                        onChange={(e) => setMes(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      >
+                        <option value="">Mês</option>
+                        {meses.map(m => (
+                          <option key={m.valor} value={m.valor}>
+                            {m.nome}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        value={ano}
+                        onChange={(e) => setAno(e.target.value)}
+                        className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      >
+                        <option value="">Ano</option>
+                        {anos.map(a => (
+                          <option key={a} value={a}>
+                            {a}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Descrição */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Descrição
+                    </label>
+                    <textarea
+                      value={descricao}
+                      onChange={(e) => setDescricao(e.target.value)}
+                      rows={3}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
+                      placeholder="Fale um pouco sobre você..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Botões */}
+              <div className="mt-8 flex justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={() => navigate('/chat')}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className={`
+                    px-4 py-2 bg-[#00a884] text-white rounded-md hover:bg-[#008f6f] 
+                    focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:ring-offset-2
+                    ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}
+                  `}
+                >
+                  {isSaving ? 'Salvando...' : 'Salvar alterações'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
     </div>
   );
 } 

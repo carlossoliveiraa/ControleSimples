@@ -6,6 +6,8 @@ import { RotaProtegida } from './components/RotaProtegida'
 import Swal from 'sweetalert2'
 import './App.css'
 import { EditarPerfil } from './pages/EditarPerfil'
+import { Principal } from './pages/Principal'
+import { Menus } from './pages/layouts/Menus'
 
 function Login() {
   const navigate = useNavigate();
@@ -70,7 +72,7 @@ function Login() {
         const { user, error } = await authService.signIn({ email, password });
         if (error) throw error;
         if (user) {
-          navigate('/chat');
+          navigate('/dashboard');
         }
       } else {
         const { user, error } = await authService.signUp({ email, password, nome });
@@ -93,7 +95,7 @@ function Login() {
               <p class="mt-2 text-sm text-gray-500">Caso não encontre o email, verifique também sua caixa de spam.</p>
             `,
             confirmButtonText: 'Entendi',
-            confirmButtonColor: '#00a884',
+            confirmButtonColor: '#4A90E2',
             allowOutsideClick: false
           });
         }
@@ -120,17 +122,14 @@ function Login() {
         <div className="flex-1 flex flex-col items-center justify-center px-8">
           <div className="w-full max-w-md">
             <div className="mb-8">
-              <div className="w-12 h-12 bg-[#00a884] rounded-lg flex items-center justify-center mb-2">
-                <span className="text-white text-xl font-bold">C</span>
+              <div className="w-12 h-12 bg-[#4A90E2] rounded-lg flex items-center justify-center mb-2">
+                <span className="text-white text-xl font-bold">CS</span>
               </div>
-              <h1 className="mt-6 text-4xl font-bold text-gray-900">Simples. Seguro.</h1>
-              <h1 className="text-4xl font-bold text-gray-900">Mensagens Confiáveis.</h1>
-              <p className="mt-4 text-gray-600">
-                Com o ChatApp, você terá mensagens rápidas, simples e seguras, disponível para todos.
-              </p>
+              <h1 className="mt-6 text-4xl font-bold text-[#4A90E2]">Controle Simples</h1>           
+           
             </div>
 
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            <h2 className="text-2xl font-semibold text-[#4A90E2] mb-6">
               {isLogin ? 'Faça seu login' : 'Crie sua conta'}
             </h2>
 
@@ -143,14 +142,14 @@ function Login() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               {!isLogin && (
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">
+                  <label className="block text-sm text-[#4A90E2] mb-1">
                     Nome Completo
                   </label>
                   <input
                     type="text"
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#00a884] text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#4A90E2] text-sm"
                     placeholder="Digite seu nome completo"
                     required
                   />
@@ -158,28 +157,28 @@ function Login() {
               )}
 
               <div>
-                <label className="block text-sm text-gray-600 mb-1">
+                <label className="block text-sm text-[#4A90E2] mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#00a884] text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#4A90E2] text-sm"
                   placeholder="Digite seu email"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-1">
+                <label className="block text-sm text-[#4A90E2] mb-1">
                   Senha
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#00a884] text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#4A90E2] text-sm"
                   placeholder="Digite sua senha"
                   required
                 />
@@ -187,14 +186,14 @@ function Login() {
 
               {!isLogin && (
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">
+                  <label className="block text-sm text-[#4A90E2] mb-1">
                     Confirmar Senha
                   </label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#00a884] text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#4A90E2] text-sm"
                     placeholder="Digite sua senha novamente"
                     required
                   />
@@ -204,7 +203,7 @@ function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full bg-[#00a884] text-white py-2.5 rounded font-medium hover:bg-[#008f6f] transition-colors ${
+                className={`w-full bg-[#4A90E2] text-white py-2.5 rounded font-medium hover:bg-[#357ABD] transition-colors ${
                   isLoading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
@@ -218,7 +217,7 @@ function Login() {
                   setIsLogin(!isLogin);
                   setError(null);
                 }}
-                className="text-sm text-[#00a884] hover:underline"
+                className="text-sm text-[#4A90E2] hover:underline"
               >
                 {isLogin ? 'Criar uma nova conta' : 'Já tenho uma conta'}
               </button>
@@ -228,13 +227,13 @@ function Login() {
       </div>
 
       {/* Lado Direito - Imagem */}
-      <div className="hidden lg:block w-1/2 bg-[#00a884] relative">
+      <div className="hidden lg:block w-1/2 bg-[#4A90E2] relative">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-[80%] max-w-md">
-            <img 
-              src="https://img.freepik.com/free-vector/chat-app-concept-illustration_114360-1012.jpg"
-              alt="Chat Interface"
-              className="w-full h-auto rounded-lg shadow-lg"
+            <img             
+              src="https://img.freepik.com/free-vector/flat-people-business-training_23-2148905954.jpg"
+              alt="Modern Dashboard Interface"
+              className="w-full h-auto rounded-lg shadow-lg object-cover"
             />
           </div>
         </div>
@@ -248,17 +247,16 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/chat" element={
+        <Route element={
           <RotaProtegida>
-            <Chat />
+            <Menus />
           </RotaProtegida>
-        } />
-        <Route path="/perfil" element={
-          <RotaProtegida>
-            <EditarPerfil />
-          </RotaProtegida>
-        } />
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        }>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Principal />} />
+          <Route path="/perfil" element={<EditarPerfil />} />
+          <Route path="/chat" element={<Chat />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
