@@ -5,6 +5,7 @@ import { authService } from './services/auth'
 import { RotaProtegida } from './components/RotaProtegida'
 import Swal from 'sweetalert2'
 import './App.css'
+import { EditarPerfil } from './pages/EditarPerfil'
 
 function Login() {
   const navigate = useNavigate();
@@ -250,6 +251,11 @@ function App() {
         <Route path="/chat" element={
           <RotaProtegida>
             <Chat />
+          </RotaProtegida>
+        } />
+        <Route path="/perfil" element={
+          <RotaProtegida>
+            <EditarPerfil />
           </RotaProtegida>
         } />
         <Route path="/" element={<Navigate to="/login" replace />} />

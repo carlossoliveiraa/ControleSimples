@@ -309,15 +309,15 @@ export function InfoUsuario({
           {/* Menu dropdown */}
           <div className="absolute left-0 top-full mt-2 w-48 rounded-lg bg-white border border-gray-100 shadow-lg shadow-gray-100/50 z-20">
             <div className="py-1">
-              {/* Botão Editar */}
+              {/* Editar Perfil */}
               <button
-                onClick={handleEditName}
+                onClick={() => navigate('/perfil')}
                 className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
               >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                Editar nome
+                Editar perfil
               </button>
 
               {/* Botão Sair */}

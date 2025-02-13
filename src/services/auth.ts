@@ -327,4 +327,35 @@ export const authService = {
       };
     }
   },
+
+  async updateProfile(userId: string, data: {
+    nome: string;
+    telefone?: string;
+    descricao?: string;
+    data_nascimento?: string;
+    configuracoes?: {
+      idioma: string;
+    };
+  }) {
+    try {
+      // Remover campos undefined/null antes de enviar
+      const dadosLimpos = Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v != null)
+      );
+
+      const { error } = await supabase
+        .from('usuarios')
+        .update(dadosLimpos)
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Erro ao atualizar perfil:', error);
+      return { 
+        error: new Error(error.message || 'Erro ao atualizar perfil. Por favor, tente novamente.')
+      };
+    }
+  },
 }; 

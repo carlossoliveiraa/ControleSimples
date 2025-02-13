@@ -5,6 +5,12 @@ export interface Usuario {
   avatar_url: string | null;
   status: 'online' | 'offline';
   ultimo_acesso: string | null;
+  telefone: string | null;
+  descricao: string | null;
+  data_nascimento: string | null;
+  configuracoes: {
+    idioma: string;
+  };
 }
 
 export interface Conversa {
