@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
 import { ConversaItem } from './ConversaItem';
 import { InfoUsuario } from './InfoUsuario';
+import { authService } from '../services/auth';
+import type { Usuario } from '../lib/supabase';
 
 interface Conversa {
   id: string;
@@ -87,27 +90,61 @@ interface ListaConversasProps {
 }
 
 export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+
+  useEffect(() => {
+    async function carregarUsuario() {
+      const { user, error } = await authService.getCurrentUser();
+      if (error) {
+        console.error('Erro ao carregar usuário:', error);
+        return;
+      }
+      setUsuario(user);
+    }
+
+    carregarUsuario();
+  }, []);
+
+  const handleAvatarUpdate = (newAvatarUrl: string) => {
+    if (usuario) {
+      setUsuario({ ...usuario, avatar_url: newAvatarUrl });
+    }
+  };
+
+  const handleNameUpdate = (newName: string) => {
+    if (usuario) {
+      setUsuario({ ...usuario, nome: newName });
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-white border-r border-gray-200 w-full">
       {/* Cabeçalho */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-3 mb-3">
           {/* Informações do usuário */}
-          <InfoUsuario
-            nome="João Silva"
-            email="joao.silva@email.com"
-            avatar="https://i.pravatar.cc/150?img=30"
-          />
+          <div className="flex-1 min-w-0">
+            {usuario && (
+              <InfoUsuario
+                nome={usuario.nome}
+                email={usuario.email}
+                avatar={usuario.avatar_url}
+                userId={usuario.id}
+                onAvatarUpdate={handleAvatarUpdate}
+                onNameUpdate={handleNameUpdate}
+              />
+            )}
+          </div>
           
           {/* Botão de nova conversa com tooltip */}
-          <div className="relative group">
+          <div className="flex-shrink-0 relative group">
             <button className="text-gray-500 hover:text-gray-700 p-2">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
             {/* Tooltip */}
-            <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap">
+            <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap z-10">
               Nova Conversa
             </div>
           </div>

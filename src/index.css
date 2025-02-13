@@ -1,6 +1,20 @@
 @import 'tailwindcss';
 @import 'sweetalert2/dist/sweetalert2.css';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
 .swal2-popup {
   font-family: 'Inter', sans-serif;
 }

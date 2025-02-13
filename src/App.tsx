@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { Chat } from './pages/Chat'
 import { authService } from './services/auth'
+import { RotaProtegida } from './components/RotaProtegida'
 import Swal from 'sweetalert2'
 import './App.css'
 
@@ -246,7 +247,11 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat" element={
+          <RotaProtegida>
+            <Chat />
+          </RotaProtegida>
+        } />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
