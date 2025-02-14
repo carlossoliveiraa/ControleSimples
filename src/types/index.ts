@@ -69,4 +69,88 @@ export interface ClienteFormData {
   bairro: string;
   observacoes?: string;
   ativo: boolean;
+}
+
+export interface Fornecedor {
+  id: string;
+  nome: string;
+  email: string;
+  telefone: string;
+  cnpj: string;
+  site: string;
+  cep: string;
+  endereco: string;
+  numero: string;
+  bairro: string;
+  observacoes: string | null;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FornecedorFormData {
+  nome: string;
+  email: string;
+  telefone: string;
+  cnpj: string;
+  site: string;
+  cep: string;
+  endereco: string;
+  numero: string;
+  bairro: string;
+  observacoes?: string;
+  ativo: boolean;
+}
+
+export interface Categoria {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CategoriaFormData {
+  nome: string;
+  descricao?: string;
+  ativo: boolean;
+}
+
+export interface Produto {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  avatar_url: string | null;
+  sku: string;
+  codigo_barras: string | null;
+  categoria_id: string;
+  categoria?: Categoria;
+  preco_venda: number;
+  preco_promocional: number | null;
+  custo: number | null;
+  peso: number | null;
+  comprimento: number | null;
+  largura: number | null;
+  altura: number | null;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProdutoFormData {
+  nome: string;
+  descricao?: string;
+  avatar_url?: string | null;
+  sku: string;
+  codigo_barras?: string;
+  categoria_id: string;
+  preco_venda: number;
+  preco_promocional?: number;
+  custo?: number;
+  peso?: number;
+  comprimento?: number;
+  largura?: number;
+  altura?: number;
+  ativo: boolean;
 } 

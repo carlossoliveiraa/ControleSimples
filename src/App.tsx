@@ -10,6 +10,12 @@ import { Principal } from './pages/Principal'
 import { Clientes } from './pages/Clientes'
 import { Menus } from './pages/layouts/Menus'
 import { EditarCliente } from './pages/EditarCliente'
+import { Fornecedores } from './pages/Fornecedores'
+import { EditarFornecedor } from './pages/EditarFornecedor'
+import { Produtos } from './pages/Produtos'
+import { EditarProduto } from './pages/EditarProduto'
+import { Categorias } from './pages/Categorias'
+import { Estatisticas } from './pages/Estatisticas'
 
 function Login() {
   const navigate = useNavigate();
@@ -261,6 +267,14 @@ function App() {
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/clientes/novo" element={<EditarCliente />} />
           <Route path="/clientes/:id" element={<EditarCliente />} />
+          <Route path="/fornecedores" element={<Fornecedores />} />
+          <Route path="/fornecedores/novo" element={<EditarFornecedor />} />
+          <Route path="/fornecedores/:id" element={<EditarFornecedor />} />
+          <Route path="/produtos" element={<Produtos />} />
+          <Route path="/produtos/novo" element={<EditarProduto />} />
+          <Route path="/produtos/:id" element={<EditarProduto />} />
+          <Route path="/categorias" element={<Categorias />} />
+          <Route path="/estatisticas" element={<Estatisticas />} />
         </Route>
       </Routes>
     </BrowserRouter>
