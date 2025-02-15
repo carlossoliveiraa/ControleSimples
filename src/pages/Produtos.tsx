@@ -75,35 +75,38 @@ export function Produtos() {
 
   return (
     <div>
-      {/* Header da Página */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">Produtos</h1>
-          
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/categorias')}
-              className="px-4 py-2 bg-white border-2 border-[#4A90E2] text-[#4A90E2] rounded-lg hover:bg-[#4A90E2] hover:text-white transition-colors flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-              </svg>
-              Gerenciar Categorias
-            </button>
-            <button
-              onClick={() => navigate('/produtos/novo')}
-              className="px-4 py-2 bg-[#4A90E2] text-white rounded-lg hover:bg-[#357ABD] transition-colors flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Novo Produto
-            </button>
+
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+
+        <div className="px-6">
+          <div className="flex items-center justify-between h-16">
+            <h1 className="text-2xl font-semibold text-gray-800">Produtos</h1>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/categorias')}
+                className="px-4 py-2 bg-white border-2 border-[#4A90E2] text-[#4A90E2] rounded-lg hover:bg-[#4A90E2] hover:text-white transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Gerenciar Categorias
+              </button>
+              <button
+                onClick={() => navigate('/produtos/novo')}
+                className="px-4 py-2 bg-[#4A90E2] text-white rounded-lg hover:bg-[#357ABD] transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Novo Produto
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Conteúdo */}
+      <br></br>
       <div className="bg-white rounded-lg shadow-sm">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
@@ -131,8 +134,8 @@ export function Produtos() {
                     <td className="px-6 py-4">
                       {produto.avatar_url ? (
                         <div className="relative group">
-                          <img 
-                            src={produto.avatar_url} 
+                          <img
+                            src={produto.avatar_url}
                             alt={produto.nome}
                             className="w-12 h-12 rounded-lg object-cover"
                           />
@@ -180,11 +183,10 @@ export function Produtos() {
                       {calcularMargem(produto.preco_venda, produto.custo)}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        produto.ativo
+                      <span className={`px-2 py-1 text-xs rounded-full ${produto.ativo
                           ? 'bg-green-50 text-green-700'
                           : 'bg-red-50 text-red-700'
-                      }`}>
+                        }`}>
                         {produto.ativo ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>

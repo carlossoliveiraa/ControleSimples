@@ -60,8 +60,9 @@ export function Categorias() {
 
   return (
     <div>
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+      <div className="px-6">
+        <div className="flex items-center justify-between h-16">
           <h1 className="text-2xl font-semibold text-gray-800">Categorias</h1>
           
           <button
@@ -75,7 +76,8 @@ export function Categorias() {
           </button>
         </div>
       </div>
-
+      </header>
+      <br></br>
       <div className="bg-white rounded-lg shadow-sm">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">

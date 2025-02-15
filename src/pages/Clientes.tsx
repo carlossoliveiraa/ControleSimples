@@ -69,10 +69,7 @@ export function Clientes() {
       <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
         <div className="px-6">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <span className="text-xl font-semibold text-gray-800">Clientes</span>
-            </div>
-            
+          <h1 className="text-2xl font-semibold text-gray-800">Clientes</h1>            
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/clientes/novo')}
@@ -87,9 +84,9 @@ export function Clientes() {
           </div>
         </div>
       </header>
-
+      <br></br>
       {/* Main Content */}
-      <main className="p-6">
+      <main className="sticky top-0 z-10 bg-white border-b border-gray-200">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="w-8 h-8 border-4 border-[#4A90E2] border-t-transparent rounded-full animate-spin"></div>

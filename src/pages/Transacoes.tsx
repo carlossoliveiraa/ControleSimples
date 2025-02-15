@@ -70,12 +70,15 @@ export function Transacoes() {
   const navigate = useNavigate();
 
   return (
+    
     <div>
-      <div className="mb-6">
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+      <div className="px-6">
         <h1 className="text-2xl font-semibold text-gray-800">Transações</h1>
         <p className="text-gray-600 mt-1">Gerencie suas movimentações de estoque</p>
       </div>
-
+      </header>
+<br></br>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <CardTransacao
           titulo="Entrada de Produtos"
@@ -123,5 +126,6 @@ export function Transacoes() {
         />
       </div>
     </div>
+   
   );
 } 
