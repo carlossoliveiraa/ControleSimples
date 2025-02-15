@@ -1,58 +1,106 @@
 import { supabase } from './supabase';
 import type { Categoria, CategoriaFormData } from '../types';
 
-export const categoriaService = {
-  async listar() {
-    const { data, error } = await supabase
-      .from('categorias')
-      .select('*')
-      .order('nome');
+export const categoriasService = {
+  async getAll(onlyActive: boolean = false) {
+    try {
+      let query = supabase
+        .from('categorias')
+        .select('*')
+        .order('nome');
 
-    if (error) throw error;
-    return { categorias: data as Categoria[] };
+      if (onlyActive) {
+        query = query.eq('ativa', true);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar categorias:', error);
+      throw error;
+    }
   },
 
-  async criar(categoria: CategoriaFormData) {
-    const { data, error } = await supabase
-      .from('categorias')
-      .insert([categoria])
-      .select()
-      .single();
+  async getById(id: string) {
+    try {
+      const { data, error } = await supabase
+        .from('categorias')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (error) throw error;
-    return { categoria: data as Categoria };
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar categoria:', error);
+      throw error;
+    }
   },
 
-  async atualizar(id: string, categoria: Partial<CategoriaFormData>) {
-    const { data, error } = await supabase
-      .from('categorias')
-      .update(categoria)
-      .eq('id', id)
-      .select()
-      .single();
+  async create(categoria: CategoriaFormData) {
+    try {
+      const { data, error } = await supabase
+        .from('categorias')
+        .insert([{
+          nome: categoria.nome,
+          descricao: categoria.descricao,
+          cor: categoria.cor,
+          ativa: categoria.ativa ?? true
+        }])
+        .select()
+        .single();
 
-    if (error) throw error;
-    return { categoria: data as Categoria };
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erro ao criar categoria:', error);
+      throw error;
+    }
   },
 
-  async excluir(id: string) {
-    const { error } = await supabase
-      .from('categorias')
-      .delete()
-      .eq('id', id);
+  async update(id: string, categoria: Partial<CategoriaFormData>) {
+    try {
+      const updateData = {
+        nome: categoria.nome,
+        descricao: categoria.descricao,
+        cor: categoria.cor,
+        ativa: categoria.ativa
+      };
 
-    if (error) throw error;
-    return { success: true };
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key as keyof typeof updateData] === undefined) {
+          delete updateData[key as keyof typeof updateData];
+        }
+      });
+
+      const { data, error } = await supabase
+        .from('categorias')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erro ao atualizar categoria:', error);
+      throw error;
+    }
   },
 
-  async buscarPorId(id: string) {
-    const { data, error } = await supabase
-      .from('categorias')
-      .select('*')
-      .eq('id', id)
-      .single();
+  async delete(id: string) {
+    try {
+      const { error } = await supabase
+        .from('categorias')
+        .delete()
+        .eq('id', id);
 
-    if (error) throw error;
-    return { categoria: data as Categoria };
+      if (error) throw error;
+    } catch (error) {
+      console.error('Erro ao excluir categoria:', error);
+      throw error;
+    }
   }
 }; 

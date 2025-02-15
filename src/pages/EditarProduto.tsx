@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { produtoService } from '../services/produtos';
-import { categoriaService } from '../services/categorias';
+import { produtosService } from '../services/produtos';
+import { categoriasService } from '../services/categorias';
 import type { Produto, ProdutoFormData, Categoria } from '../types';
 import { ImageUpload } from '../components/ImageUpload';
+import { formataMoeda } from '../utils/formatters';
 import Swal from 'sweetalert2';
+import { FormHeader } from '../components/FormHeader';
 
 export function EditarProduto() {
   const navigate = useNavigate();
@@ -39,8 +41,8 @@ export function EditarProduto() {
 
   async function carregarCategorias() {
     try {
-      const { categorias } = await categoriaService.listar();
-      setCategorias(categorias);
+      const data = await categoriasService.getAll(true);
+      setCategorias(data || []);
     } catch (error) {
       console.error('Erro ao carregar categorias:', error);
       Swal.fire({
@@ -54,7 +56,7 @@ export function EditarProduto() {
   async function carregarProduto(produtoId: string) {
     try {
       setIsLoading(true);
-      const { produto } = await produtoService.buscarPorId(produtoId);
+      const { produto } = await produtosService.buscarPorId(produtoId);
       if (produto) {
         setFormData({
           nome: produto.nome,
@@ -88,8 +90,27 @@ export function EditarProduto() {
   const handleImageSelect = async (file: File) => {
     try {
       setIsUpdatingAvatar(true);
-      const { url } = await produtoService.uploadAvatar(file);
+
+      // Se já existe um avatar, remover antes de fazer upload do novo
+      if (formData.avatar_url) {
+        await produtosService.removeAvatar(formData.avatar_url);
+      }
+
+      const { url } = await produtosService.uploadAvatar(file);
+      
+      // Atualizar o avatar no banco imediatamente
+      if (id) {
+        await produtosService.atualizar(id, { avatar_url: url });
+      }
+      
       setFormData(prev => ({ ...prev, avatar_url: url }));
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Imagem atualizada com sucesso!',
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (error: any) {
       console.error('Erro ao atualizar imagem:', error);
       Swal.fire({
@@ -117,8 +138,23 @@ export function EditarProduto() {
 
       if (result.isConfirmed && formData.avatar_url) {
         setIsUpdatingAvatar(true);
-        await produtoService.removeAvatar(formData.avatar_url);
+        
+        // Remover do storage
+        await produtosService.removeAvatar(formData.avatar_url);
+        
+        // Atualizar no banco imediatamente
+        if (id) {
+          await produtosService.atualizar(id, { avatar_url: null });
+        }
+        
         setFormData(prev => ({ ...prev, avatar_url: null }));
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Imagem removida com sucesso!',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     } catch (error) {
       console.error('Erro ao remover imagem:', error);
@@ -182,9 +218,9 @@ export function EditarProduto() {
       setIsLoading(true);
       
       if (id) {
-        await produtoService.atualizar(id, formData);
+        await produtosService.atualizar(id, formData);
       } else {
-        await produtoService.criar(formData);
+        await produtosService.criar(formData);
       }
 
       Swal.fire({
@@ -214,18 +250,12 @@ export function EditarProduto() {
   };
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
-        <div className="px-6">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <span className="text-xl font-semibold text-gray-800">
-                {id ? 'Editar Produto' : 'Novo Produto'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div>
+      <FormHeader
+        title={id ? 'Editar Produto' : 'Novo Produto'}
+        subtitle={id ? 'Altere os dados do produto' : 'Cadastre um novo produto'}
+        backTo="/produtos"
+      />
 
       <main className="p-6">
         <div className="max-w-4xl mx-auto">

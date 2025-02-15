@@ -82,112 +82,62 @@ export const authService = {
 
   async signIn({ email, password }: SignInData) {
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
+        password
       });
 
-      if (authError) {
-        if (authError.message?.includes('Invalid login credentials')) {
-          throw new Error('Email ou senha incorretos.');
-        }
-        throw authError;
+      if (error) throw error;
+
+      if (!data.session || !data.user) {
+        throw new Error('Erro ao fazer login. Tente novamente.');
       }
 
-      if (authData.user) {
-        // Buscar dados do usuário
-        const { data: userData, error: userError } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('id', authData.user.id)
-          .maybeSingle();
+      // Atualizar status do usuário para online
+      await supabase
+        .from('usuarios')
+        .update({ 
+          status: 'online',
+          ultimo_acesso: new Date().toISOString()
+        })
+        .eq('id', data.user.id);
 
-        if (userError) throw userError;
-
-        // Se não encontrou o usuário na tabela, criar um registro básico
-        if (!userData) {
-          const { data: newUserData, error: createError } = await supabase
-            .from('usuarios')
-            .insert({
-              id: authData.user.id,
-              email: authData.user.email || email,
-              nome: authData.user.user_metadata.nome || email.split('@')[0],
-              status: 'online',
-              configuracoes: {
-                notificacoes: true,
-                tema: 'light',
-                idioma: 'pt-BR'
-              }
-            })
-            .select()
-            .single();
-
-          if (createError) throw createError;
-        } else {
-          // Atualizar status e último acesso
-          const { error: updateError } = await supabase
-            .from('usuarios')
-            .update({
-              status: 'online',
-              ultimo_acesso: new Date().toISOString(),
-            })
-            .eq('id', authData.user.id);
-
-          if (updateError) throw updateError;
-        }
-      }
-
-      return { user: authData.user, error: null };
+      return { session: data.session, user: data.user };
     } catch (error: any) {
       console.error('Erro no login:', error);
-      return { 
-        user: null, 
-        error: new Error(error.message || 'Erro ao fazer login. Por favor, tente novamente.')
-      };
+      throw new Error(error.message || 'Erro ao fazer login');
     }
   },
 
   async getCurrentUser() {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError) throw authError;
-      
-      if (user) {
-        const { data: userData, error: userError } = await supabase
-          .from('usuarios')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle(); // Usar maybeSingle ao invés de single
-
-        if (userError) throw userError;
-
-        // Se não encontrou o usuário na tabela, criar um registro básico
-        if (!userData) {
-          const { data: newUserData, error: createError } = await supabase
-            .from('usuarios')
-            .insert({
-              id: user.id,
-              email: user.email,
-              nome: user.user_metadata.nome || user.email?.split('@')[0] || 'Usuário',
-              status: 'online',
-              configuracoes: {
-                notificacoes: true,
-                tema: 'light',
-                idioma: 'pt-BR'
-              }
-            })
-            .select()
-            .single();
-
-          if (createError) throw createError;
-          return { user: newUserData as Usuario, error: null };
-        }
-
-        return { user: userData as Usuario, error: null };
+      if (authError || !user) {
+        return { user: null, error: authError };
       }
 
-      return { user: null, error: null };
-    } catch (error) {
+      const { data: userData, error: userError } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (userError) {
+        return { user: null, error: userError };
+      }
+
+      // Atualizar último acesso silenciosamente
+      supabase
+        .from('usuarios')
+        .update({ 
+          ultimo_acesso: new Date().toISOString() 
+        })
+        .eq('id', user.id)
+        .then(() => {})
+        .catch(() => {});
+
+      return { user: userData, error: null };
+    } catch (error: any) {
       console.error('Erro ao obter usuário:', error);
       return { user: null, error };
     }
@@ -195,21 +145,12 @@ export const authService = {
 
   async signOut() {
     try {
-      // Atualizar status para offline antes de fazer logout
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('usuarios')
-          .update({ status: 'offline' })
-          .eq('id', user.id);
-      }
-
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       return { error: null };
-    } catch (error) {
-      console.error('Erro ao sair:', error);
-      return { error };
+    } catch (error: any) {
+      console.error('Erro no logout:', error);
+      throw new Error(error.message || 'Erro ao fazer logout');
     }
   },
 
@@ -358,4 +299,67 @@ export const authService = {
       };
     }
   },
+
+  async getSession() {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Erro ao obter sessão:', error);
+        return null;
+      }
+
+      return session;
+    } catch (error) {
+      console.error('Erro ao obter sessão:', error);
+      return null;
+    }
+  },
+
+  // Configurar headers de segurança
+  async setSecurityHeaders() {
+    if (typeof window !== 'undefined') {
+      document.head.querySelector('meta[http-equiv="Content-Security-Policy"]')?.remove();
+      const meta = document.createElement('meta');
+      meta.httpEquiv = 'Content-Security-Policy';
+      meta.content = `
+        default-src 'self';
+        img-src 'self' data: https: blob:;
+        style-src 'self' 'unsafe-inline';
+        script-src 'self' 'unsafe-inline';
+        connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+        frame-src 'self' https://*.supabase.co;
+        font-src 'self' data:;
+      `.replace(/\s+/g, ' ').trim();
+      document.head.appendChild(meta);
+    }
+  },
+
+  async resetPassword(email: string) {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/redefinir-senha`,
+      });
+
+      if (error) throw error;
+      return { error: null };
+    } catch (error: any) {
+      console.error('Erro ao enviar email de recuperação:', error);
+      throw new Error(error.message || 'Erro ao enviar email de recuperação');
+    }
+  },
+
+  async updatePassword(newPassword: string) {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+      return { error: null };
+    } catch (error: any) {
+      console.error('Erro ao atualizar senha:', error);
+      throw new Error(error.message || 'Erro ao atualizar senha');
+    }
+  }
 }; 

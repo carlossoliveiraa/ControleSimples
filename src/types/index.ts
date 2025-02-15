@@ -105,17 +105,14 @@ export interface FornecedorFormData {
 export interface Categoria {
   id: string;
   nome: string;
-  descricao: string | null;
-  ativo: boolean;
-  created_at: string;
-  updated_at: string;
+  descricao: string;
+  cor: string;
+  ativa: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface CategoriaFormData {
-  nome: string;
-  descricao?: string;
-  ativo: boolean;
-}
+export type CategoriaFormData = Omit<Categoria, 'id' | 'created_at' | 'updated_at'>;
 
 export interface Produto {
   id: string;

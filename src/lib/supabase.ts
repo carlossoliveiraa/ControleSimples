@@ -4,10 +4,26 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and Anon Key são necessários.');
+  throw new Error('Variáveis de ambiente do Supabase não configuradas');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Configurações de segurança do cliente
+const supabaseOptions = {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    headers: {
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block'
+    }
+  }
+};
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions);
 
 // Tipos para as tabelas do Supabase
 export type Usuario = {
