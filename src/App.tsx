@@ -24,6 +24,8 @@ import { Inventario } from './pages/transacoes/Inventario'
 import { useAuthStore } from './stores/authStore'
 import { CadastroCategoria } from './pages/CadastroCategoria'
 import { HeaderPerfil } from './components/HeaderPerfil'
+import { NovaEntrada } from './pages/transacoes/NovaEntrada'
+import { NovaSaida } from './pages/transacoes/NovaSaida'
 
 function Login() {
   const navigate = useNavigate();
@@ -260,6 +262,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
           
+          {/* Rotas públicas */}
+          <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
+          
           {/* Rotas protegidas com layout base */}
           <Route element={<RotaProtegida />}>
             <Route element={<BaseLayout />}>
@@ -271,7 +276,9 @@ function App() {
               {/* Rotas de Transações */}
               <Route path="/transacoes" element={<Transacoes />} />
               <Route path="/transacoes/entradas" element={<Entradas />} />
+              <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
               <Route path="/transacoes/saidas" element={<Saidas />} />
+              <Route path="/transacoes/saidas/novo" element={<NovaSaida />} />
               <Route path="/transacoes/inventario" element={<Inventario />} />
               
               {/* Outras rotas */}

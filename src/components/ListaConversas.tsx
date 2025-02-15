@@ -18,15 +18,6 @@ interface Conversa {
 const conversas: Conversa[] = [
   {
     id: '1',
-    nome: 'Design chat',
-    ultimaMensagem: 'Jessie Rollins sent...',
-    horario: '4m',
-    avatar: 'DC',
-    naoLidas: 1,
-    pinned: true
-  },
-  {
-    id: '2',
     nome: 'Osman Campos',
     ultimaMensagem: "You: Hey! We are read...",
     horario: '20m',
@@ -34,76 +25,32 @@ const conversas: Conversa[] = [
     pinned: true
   },
   {
-    id: '3',
+    id: '2',
     nome: 'Jayden Church',
     ultimaMensagem: 'I prepared some varia...',
     horario: '1h',
     avatar: 'https://i.pravatar.cc/150?img=11',
-  },
-  {
-    id: '4',
-    nome: 'Jacob Mcleod',
-    ultimaMensagem: 'And send me the proto...',
-    horario: '10m',
-    avatar: 'https://i.pravatar.cc/150?img=12',
-    naoLidas: 1
-  },
-  {
-    id: '5',
-    nome: 'Jasmin Lowery',
-    ultimaMensagem: "You: Ok! Let's discuss it on th...",
-    horario: '20m',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-  },
-  {
-    id: '6',
-    nome: 'Zaid Myers',
-    ultimaMensagem: 'You: Hey! We are ready to in...',
-    horario: '45m',
-    avatar: 'https://i.pravatar.cc/150?img=15',
-  },
-  {
-    id: '7',
-    nome: 'Anthony Cordanes',
-    ultimaMensagem: 'What do you think?',
-    horario: '1d',
-    avatar: 'https://i.pravatar.cc/150?img=20',
-  },
-  {
-    id: '8',
-    nome: 'Connar Garcia',
-    ultimaMensagem: 'You: I think it would be perfe...',
-    horario: '2d',
-    avatar: 'https://i.pravatar.cc/150?img=25',
-  },
-  {
-    id: '9',
-    nome: 'Vanessa Cox',
-    ultimaMensagem: 'Voice message',
-    horario: '2d',
-    avatar: 'https://i.pravatar.cc/150?img=23',
   }
 ];
 
 interface ListaConversasProps {
-  onConversaSelect?: () => void;
+  onConversaSelect: (conversa: Conversa) => void;
 }
 
 export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [showUserInfo, setShowUserInfo] = useState(false);
 
   useEffect(() => {
-    async function carregarUsuario() {
-      const { user, error } = await authService.getCurrentUser();
-      if (error) {
-        console.error('Erro ao carregar usuário:', error);
-        return;
-      }
-      setUsuario(user);
-    }
-
     carregarUsuario();
   }, []);
+
+  async function carregarUsuario() {
+    const { user } = await authService.getCurrentUser();
+    if (user) {
+      setUsuario(user);
+    }
+  }
 
   const handleAvatarUpdate = (newAvatarUrl: string) => {
     if (usuario) {
@@ -118,21 +65,25 @@ export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-white border-r border-gray-200 w-full">
+    <div className="flex flex-col h-full w-full">
       {/* Cabeçalho */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center gap-3 mb-3">
-          {/* Informações do usuário */}
-          <div className="flex-1 min-w-0">
+      <div className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="relative">
             {usuario && (
-              <InfoUsuario
-                nome={usuario.nome}
-                email={usuario.email}
-                avatar={usuario.avatar_url}
-                userId={usuario.id}
-                onAvatarUpdate={handleAvatarUpdate}
-                onNameUpdate={handleNameUpdate}
-              />
+              <div 
+                className="cursor-pointer"
+                onClick={() => setShowUserInfo(!showUserInfo)}
+              >
+                <InfoUsuario
+                  nome={usuario.nome}
+                  email={usuario.email}
+                  avatar={usuario.avatar_url}
+                  userId={usuario.id}
+                  onAvatarUpdate={handleAvatarUpdate}
+                  onNameUpdate={handleNameUpdate}
+                />
+              </div>
             )}
           </div>
           
@@ -143,7 +94,6 @@ export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
-            {/* Tooltip */}
             <div className="absolute right-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap z-10">
               Nova Conversa
             </div>
@@ -168,7 +118,7 @@ export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
       {/* Lista de Conversas */}
       <div className="flex-1 overflow-y-auto">
         {conversas.map((conversa) => (
-          <div key={conversa.id} onClick={onConversaSelect}>
+          <div key={conversa.id} onClick={() => onConversaSelect(conversa)}>
             <ConversaItem
               {...conversa}
             />
