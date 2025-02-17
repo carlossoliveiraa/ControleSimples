@@ -12,6 +12,12 @@ interface InfoUsuarioProps {
   onNameUpdate?: (newName: string) => void;
 }
 
+interface ValidationResult {
+  isValid: boolean;
+  message?: string;
+  validName?: string;
+}
+
 export function InfoUsuario({ 
   nome, 
   email, 
@@ -27,44 +33,22 @@ export function InfoUsuario({
   const primeiraLetra = nome.charAt(0).toUpperCase();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  const validateName = (name: string | undefined): { isValid: boolean; message?: string } => {
+  const validateName = (name: string | undefined): ValidationResult => {
     if (!name) {
       return { isValid: false, message: 'Nome é obrigatório' };
     }
-    // Remove espaços extras e normaliza espaços duplos
+    
     const trimmedName = name.trim().replace(/\s+/g, ' ');
     
-    // Verifica se está vazio após trim
     if (!trimmedName) {
       return { isValid: false, message: 'O nome não pode ficar em branco' };
     }
 
-    // Verifica o tamanho mínimo e máximo
-    if (trimmedName.length < 2) {
-      return { isValid: false, message: 'O nome deve ter pelo menos 2 caracteres' };
-    }
-    if (trimmedName.length > 50) {
-      return { isValid: false, message: 'O nome deve ter no máximo 50 caracteres' };
-    }
-
-    // Verifica se contém apenas números
-    if (/^\d+$/.test(trimmedName)) {
-      return { isValid: false, message: 'O nome não pode conter apenas números' };
-    }
-
-    // Verifica se contém apenas emojis
-    const emojiRegex = /^[\p{Emoji}|\s]+$/u;
-    if (emojiRegex.test(trimmedName)) {
-      return { isValid: false, message: 'O nome não pode conter apenas emojis' };
-    }
-
-    // Verifica se contém caracteres válidos (letras, espaços, acentos e alguns caracteres especiais comuns em nomes)
-    const validNameRegex = /^[\p{L}\s\-'.]+$/u;
-    if (!validNameRegex.test(trimmedName)) {
-      return { isValid: false, message: 'O nome contém caracteres inválidos' };
-    }
-
-    return { isValid: true, validName: trimmedName };
+    return { 
+      isValid: true, 
+      validName: trimmedName,
+      message: undefined 
+    };
   };
 
   const handleLogout = async () => {
@@ -218,6 +202,13 @@ export function InfoUsuario({
         setAvatarPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const validation = validateName(e.target.value);
+    if (validation.isValid && validation.validName) {
+      onNameUpdate?.(validation.validName);
     }
   };
 

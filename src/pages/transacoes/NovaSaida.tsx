@@ -10,6 +10,11 @@ interface ProdutoSelecionado extends Produto {
   valor_unitario: number;
 }
 
+interface ProdutoSaida extends Produto {
+  quantidade: number;
+  valor_unitario: number;
+}
+
 export function NovaSaida() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +40,19 @@ export function NovaSaida() {
   const buscarProdutos = async () => {
     try {
       const data = await entradasService.buscarProdutos(searchTerm);
-      setProdutos(data);
+      const produtosFormatados: Produto[] = data.map(item => ({
+        id: String(item.id),
+        nome: String(item.nome),
+        sku: String(item.sku),
+        descricao: item.descricao || '',
+        avatar_url: item.avatar_url || null,
+        codigo_barras: item.codigo_barras || '',
+        categoria_id: item.categoria?.[0]?.id || '',
+        preco_venda: Number(item.preco_venda),
+        categoria: item.categoria || [],
+        ativo: true
+      }));
+      setProdutos(produtosFormatados);
       setShowResults(true);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);

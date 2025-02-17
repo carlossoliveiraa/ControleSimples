@@ -3,6 +3,7 @@ import { clienteService } from '../services/clientes';
 import type { Cliente } from '../types';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { ClienteForm } from '../components/ClienteForm';
 
 export function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -61,6 +62,11 @@ export function Clientes() {
         text: 'Tente novamente mais tarde'
       });
     }
+  };
+
+  const handleClienteSalvo = () => {
+    setShowForm(false);
+    carregarClientes();
   };
 
   return (
@@ -170,12 +176,8 @@ export function Clientes() {
       {/* Modal de Formulário */}
       {showForm && (
         <ClienteForm
-          cliente={selectedCliente}
           onClose={() => setShowForm(false)}
-          onSave={() => {
-            setShowForm(false);
-            carregarClientes();
-          }}
+          onSave={handleClienteSalvo}
         />
       )}
     </div>

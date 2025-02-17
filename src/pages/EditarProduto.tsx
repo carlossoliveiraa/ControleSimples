@@ -18,6 +18,7 @@ export function EditarProduto() {
   const [formData, setFormData] = useState<ProdutoFormData>({
     nome: '',
     descricao: '',
+    avatar_url: null,
     sku: '',
     codigo_barras: '',
     categoria_id: '',
@@ -29,7 +30,6 @@ export function EditarProduto() {
     largura: 0,
     altura: 0,
     ativo: true,
-    avatar_url: null
   });
 
   useEffect(() => {
@@ -245,8 +245,9 @@ export function EditarProduto() {
   };
 
   const calcularMargem = () => {
-    if (!formData.custo || formData.custo === 0) return 0;
-    return ((formData.preco_venda - formData.custo) / formData.custo) * 100;
+    const custo = formData.custo || 0;
+    if (custo === 0) return 0;
+    return ((formData.preco_venda - custo) / custo) * 100;
   };
 
   // Adicione verificação para custo undefined

@@ -4,12 +4,12 @@ import { authService } from '../services/auth';
 import type { Usuario } from '../types';
 import Swal from 'sweetalert2';
 
-interface PerfilFormData {
+interface PerfilState {
   nome: string;
   email: string;
   telefone?: string;
-  avatar_url?: string | null; // Alterado para aceitar null
-  // ... outros campos
+  avatar_url: string | undefined; // Alterado de null para undefined
+  data_nascimento?: string;
 }
 
 export function EditarPerfil() {
@@ -19,11 +19,14 @@ export function EditarPerfil() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   
   // Form states
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const [formData, setFormData] = useState<PerfilState>({
+    nome: '',
+    email: '',
+    telefone: '',
+    avatar_url: undefined,
+    data_nascimento: undefined
+  });
   const [descricao, setDescricao] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
   const [configuracoes, setConfiguracoes] = useState({
     idioma: 'pt-BR'
   });
@@ -54,9 +57,13 @@ export function EditarPerfil() {
     const { user } = await authService.getCurrentUser();
     if (user) {
       setUsuario(user);
-      setNome(user.nome);
-      setEmail(user.email);
-      setTelefone(user.telefone || '');
+      setFormData({
+        nome: user.nome,
+        email: user.email,
+        telefone: user.telefone || '',
+        avatar_url: user.avatar_url,
+        data_nascimento: user.data_nascimento,
+      });
       setDescricao(user.descricao || '');
       
       const { dia, mes, ano } = splitData(user.data_nascimento || '');
@@ -81,8 +88,8 @@ export function EditarPerfil() {
       const data_nascimento = combineData(dia, mes, ano);
 
       const { error } = await authService.updateProfile(usuario.id, {
-        nome,
-        telefone,
+        nome: formData.nome,
+        telefone: formData.telefone,
         descricao,
         data_nascimento: data_nascimento || null,
         configuracoes
@@ -169,7 +176,7 @@ export function EditarPerfil() {
         
         if (error) throw error;
         
-        setUsuario(prev => prev ? { ...prev, avatar_url: null } : null);
+        setUsuario(prev => prev ? { ...prev, avatar_url: undefined } : null);
         
         await Swal.fire({
           icon: 'success',
@@ -317,8 +324,8 @@ export function EditarPerfil() {
                     </label>
                     <input
                       type="text"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
+                      value={formData.nome}
+                      onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
                       className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
                       required
                     />
@@ -331,7 +338,7 @@ export function EditarPerfil() {
                     </label>
                     <input
                       type="email"
-                      value={email}
+                      value={formData.email}
                       disabled
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500 cursor-not-allowed"
                     />
@@ -344,8 +351,8 @@ export function EditarPerfil() {
                     </label>
                     <input
                       type="tel"
-                      value={telefone}
-                      onChange={(e) => setTelefone(e.target.value)}
+                      value={formData.telefone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, telefone: e.target.value }))}
                       className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a884] focus:border-transparent"
                       placeholder="+55 (11) 98765-4321"
                     />

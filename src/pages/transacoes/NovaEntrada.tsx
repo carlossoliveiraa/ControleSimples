@@ -5,9 +5,11 @@ import { formataMoeda } from '../../utils/formatters';
 import Swal from 'sweetalert2';
 import type { Produto } from '../../types';
 
-interface ProdutoSelecionado extends Produto {
+interface ProdutoSelecionado extends ProdutoLista {
   quantidade: number;
   valor_unitario: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ProdutoLista {
@@ -50,11 +52,19 @@ export function NovaEntrada() {
   const buscarProdutos = async () => {
     try {
       const data = await entradasService.buscarProdutos(searchTerm);
-      setProdutos(data.map(item => ({
-        ...item,
+      const produtosFormatados: ProdutoLista[] = data.map(item => ({
+        id: String(item.id),
+        nome: String(item.nome),
+        sku: String(item.sku),
+        preco_venda: Number(item.preco_venda),
         categoria_id: item.categoria?.[0]?.id || '',
-        ativo: true
-      })));
+        categoria: item.categoria || [],
+        ativo: true,
+        avatar_url: item.avatar_url || null,
+        descricao: item.descricao || '',
+        codigo_barras: item.codigo_barras || ''
+      }));
+      setProdutos(produtosFormatados);
       setShowResults(true);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -62,18 +72,15 @@ export function NovaEntrada() {
   };
 
   const handleProdutoSelect = (produto: ProdutoLista) => {
-    setProdutosSelecionados(prev => [
-      ...prev,
-      {
-        ...produto,
-        quantidade: 1,
-        valor_unitario: produto.preco_venda,
-        descricao: produto.descricao || '',
-        avatar_url: produto.avatar_url || null,
-        codigo_barras: produto.codigo_barras || '',
-        categoria_id: produto.categoria_id
-      } as ProdutoSelecionado
-    ]);
+    const produtoSelecionado: ProdutoSelecionado = {
+      ...produto,
+      quantidade: 1,
+      valor_unitario: produto.preco_venda,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    setProdutosSelecionados(prev => [...prev, produtoSelecionado]);
     setSearchTerm('');
     setProdutos([]);
     setShowResults(false);
