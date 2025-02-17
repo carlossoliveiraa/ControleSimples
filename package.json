@@ -5,12 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "npm run type-check",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "vite",
-    "type-check": "tsc --noEmit"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emoji-mart/react": "^1.1.1",
