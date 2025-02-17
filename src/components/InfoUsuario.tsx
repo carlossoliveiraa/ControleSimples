@@ -8,7 +8,7 @@ interface InfoUsuarioProps {
   email: string;
   avatar: string | null;
   userId: string;
-  onAvatarUpdate?: (newAvatarUrl: string) => void;
+  onAvatarUpdate: (url: string | null) => void;
   onNameUpdate?: (newName: string) => void;
 }
 
@@ -136,7 +136,9 @@ export function InfoUsuario({
   };
 
   const handleAvatarClick = () => {
-    fileInputRef.current?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {

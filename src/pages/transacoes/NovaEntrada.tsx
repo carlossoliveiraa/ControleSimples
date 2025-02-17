@@ -10,11 +10,21 @@ interface ProdutoSelecionado extends Produto {
   valor_unitario: number;
 }
 
+interface ProdutoLista {
+  id: string;
+  nome: string;
+  sku: string;
+  preco_venda: number;
+  categoria: {
+    nome: string;
+  }[];
+}
+
 export function NovaEntrada() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [produtos, setProdutos] = useState<ProdutoLista[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [produtosSelecionados, setProdutosSelecionados] = useState<ProdutoSelecionado[]>([]);
 

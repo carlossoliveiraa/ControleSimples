@@ -109,7 +109,10 @@ export function ChatContent({ onVoltar, conversaSelecionada }: ChatContentProps)
       </div>
 
       {/* Área de Input */}
-      <ChatInput />
+      <ChatInput onSendMessage={(message) => {
+        // Implemente a lógica de envio
+        console.log('Mensagem enviada:', message);
+      }} />
     </div>
   );
 } 
