@@ -21,48 +21,61 @@ export function BaseLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Menu Lateral para Desktop */}
-      <div className="hidden lg:block w-64 flex-shrink-0">
-        <MenuLateral />
-      </div>
+    <div className="flex h-screen">
+      {/* Menu Lateral */}
+      <MenuLateral />
 
-      {/* Menu Lateral Mobile */}
-      {menuAberto && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-            onClick={() => setMenuAberto(false)}
-          />
-          <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 z-50 lg:hidden">
-            <MenuLateral onClose={() => setMenuAberto(false)} />
-          </div>
-        </>
-      )}
-
-      {/* Área Principal */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+      {/* Conteúdo Principal */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="sticky top-0 z-30 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="h-full px-4 flex items-center justify-between">
-            {/* Botão do menu mobile */}
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            {/* Botão do Menu (Mobile) */}
             <button
-              onClick={() => setMenuAberto(true)}
-              className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={() => setMenuAberto(!menuAberto)}
+              className="lg:hidden text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d={menuAberto ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                />
               </svg>
             </button>
 
-            {/* Perfil */}
-            {usuario && (
-              <HeaderPerfil 
-                nome={usuario.nome}
-                email={usuario.email}
-                avatar={usuario.avatar_url}
-              />
-            )}
+            {/* Título da Página (pode ser dinâmico) */}
+            <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+              Dashboard
+            </h1>
+
+            {/* Área do Perfil (sempre à direita) */}
+            <div className="flex items-center gap-4">
+              {/* Botão de Tema */}
+              <button
+                className="p-2 text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => document.documentElement.classList.toggle('dark')}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                  />
+                </svg>
+              </button>
+
+              {/* Perfil */}
+              {usuario && (
+                <HeaderPerfil 
+                  nome={usuario.nome}
+                  email={usuario.email}
+                  avatar={usuario.avatar_url}
+                />
+              )}
+            </div>
           </div>
         </header>
 

@@ -145,7 +145,7 @@ export function ChatInput({ onSendMessage, onSendFile }: ChatInputProps) {
             <EmojiPicker
               onEmojiClick={onEmojiClick}
               autoFocusSearch={false}
-              theme={document.documentElement.classList.contains('dark') ? 'dark' : 'light'}
+              theme={document.documentElement.classList.contains('dark') ? 'dark' as const : 'light' as const}
             />
           </div>
         )}

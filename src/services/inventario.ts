@@ -12,7 +12,7 @@ interface MovimentacaoItem {
   movimentacao: MovimentacaoData;
 }
 
-export interface ProdutoEstoque {
+interface ProdutoEstoque {
   id: string;
   nome: string;
   sku: string;
@@ -22,7 +22,7 @@ export interface ProdutoEstoque {
   valor_total: number;
   ultima_entrada: string | null;
   ultima_saida: string | null;
-  status: 'normal' | 'baixo' | 'critico';
+  status: "normal" | "baixo" | "critico";
 }
 
 export const inventarioService = {

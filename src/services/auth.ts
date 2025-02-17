@@ -134,7 +134,10 @@ export const authService = {
         })
         .eq('id', user.id)
         .then(() => {})
-        .catch(() => {});
+        .catch((error: Error) => {
+          console.error('Erro ao atualizar perfil:', error);
+          throw error;
+        });
 
       return { user: userData, error: null };
     } catch (error: any) {

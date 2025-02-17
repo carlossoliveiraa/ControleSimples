@@ -24,11 +24,10 @@ export function HeaderPerfil({ nome, email, avatar }: HeaderPerfilProps) {
   };
 
   return (
-    <div className="relative">
-      {/* Botão do Perfil */}
-      <div 
-        className="flex items-center gap-2 cursor-pointer select-none"
+    <div className="relative ml-auto">
+      <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="flex items-center gap-2 focus:outline-none"
       >
         {avatar ? (
           <img
@@ -37,32 +36,23 @@ export function HeaderPerfil({ nome, email, avatar }: HeaderPerfilProps) {
             className="w-8 h-8 rounded-full object-cover"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-[#4A90E2] flex items-center justify-center">
-            <span className="text-white font-semibold">{primeiraLetra}</span>
+          <div className="w-8 h-8 rounded-full bg-[#4A90E2] text-white flex items-center justify-center">
+            {primeiraLetra}
           </div>
         )}
-        <span className="text-sm text-gray-600">{email}</span>
-        <svg 
-          className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+          {nome}
+        </span>
+      </button>
 
-      {/* Dropdown */}
+      {/* Dropdown do perfil */}
       {isDropdownOpen && (
         <>
-          {/* Overlay para fechar o dropdown ao clicar fora */}
-          <div 
+          <div
             className="fixed inset-0 z-10"
             onClick={() => setIsDropdownOpen(false)}
           />
-          
-          {/* Menu dropdown */}
-          <div className="absolute right-0 top-full mt-2 w-48 rounded-lg bg-white border border-gray-100 shadow-lg shadow-gray-100/50 z-20">
+          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-20 py-1">
             <div className="py-1">
               {/* Editar Perfil */}
               <button

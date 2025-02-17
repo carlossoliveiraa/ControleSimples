@@ -17,6 +17,14 @@ interface ChatContentProps {
   conversaSelecionada: Conversa | null;
 }
 
+interface MensagemBalaoProps {
+  id: string;
+  texto: string;
+  horario: string;
+  remetente: string;
+  tipo: "audio" | "texto" | "imagem" | "documento";
+}
+
 const mensagensOsman = [
   {
     id: '1',
@@ -95,6 +103,7 @@ export function ChatContent({ onVoltar, conversaSelecionada }: ChatContentProps)
           <MensagemBalao
             key={mensagem.id}
             {...mensagem}
+            tipo={mensagem.tipo as "audio" | "texto" | "imagem" | "documento"}
           />
         ))}
       </div>
