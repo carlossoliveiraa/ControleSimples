@@ -15,13 +15,20 @@ interface ProdutoLista {
   nome: string;
   sku: string;
   preco_venda: number;
+  categoria_id: string;
   categoria: {
     nome: string;
   }[];
   descricao?: string;
   avatar_url?: string | null;
   codigo_barras?: string;
-  categoria_id: string;
+  preco_promocional?: number;
+  custo?: number;
+  peso?: number;
+  comprimento?: number;
+  largura?: number;
+  altura?: number;
+  ativo: boolean;
 }
 
 export function NovaEntrada() {
@@ -43,7 +50,11 @@ export function NovaEntrada() {
   const buscarProdutos = async () => {
     try {
       const data = await entradasService.buscarProdutos(searchTerm);
-      setProdutos(data);
+      setProdutos(data.map(item => ({
+        ...item,
+        categoria_id: item.categoria?.[0]?.id || '',
+        ativo: true
+      })));
       setShowResults(true);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);

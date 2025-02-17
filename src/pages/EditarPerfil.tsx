@@ -4,6 +4,14 @@ import { authService } from '../services/auth';
 import type { Usuario } from '../types';
 import Swal from 'sweetalert2';
 
+interface PerfilFormData {
+  nome: string;
+  email: string;
+  telefone?: string;
+  avatar_url?: string | null; // Alterado para aceitar null
+  // ... outros campos
+}
+
 export function EditarPerfil() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);

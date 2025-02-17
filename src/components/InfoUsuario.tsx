@@ -27,7 +27,10 @@ export function InfoUsuario({
   const primeiraLetra = nome.charAt(0).toUpperCase();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  const validateName = (name: string) => {
+  const validateName = (name: string | undefined): { isValid: boolean; message?: string } => {
+    if (!name) {
+      return { isValid: false, message: 'Nome é obrigatório' };
+    }
     // Remove espaços extras e normaliza espaços duplos
     const trimmedName = name.trim().replace(/\s+/g, ' ');
     

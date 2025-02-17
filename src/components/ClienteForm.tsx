@@ -11,19 +11,19 @@ interface ClienteFormProps {
 
 export function ClienteForm({ cliente, onClose, onSave }: ClienteFormProps) {
   const [formData, setFormData] = useState<ClienteFormData>({
-    nome: '',
-    email: '',
-    telefone: '',
-    cpf: '',
-    data_nascimento: '',
-    sexo: 'M',
-    cep: '',
-    endereco: '',
-    numero: '',
-    bairro: '',
-    observacoes: '',
-    ativo: true,
-    avatar_url: null
+    nome: cliente?.nome || '',
+    email: cliente?.email || '',
+    telefone: cliente?.telefone || '',
+    cpf: cliente?.cpf || '',
+    data_nascimento: cliente?.data_nascimento || '',
+    sexo: cliente?.sexo || 'M',
+    cep: cliente?.cep || '',
+    endereco: cliente?.endereco || '',
+    numero: cliente?.numero || '',
+    bairro: cliente?.bairro || '',
+    observacoes: cliente?.observacoes || '',
+    ativo: cliente?.ativo || true,
+    avatar_url: cliente?.avatar_url || null
   });
 
   const [isLoading, setIsLoading] = useState(false);

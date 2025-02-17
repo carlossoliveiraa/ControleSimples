@@ -28,15 +28,15 @@ export interface ProdutoEstoque {
 export const inventarioService = {
   async listarEstoque(): Promise<ProdutoEstoque[]> {
     try {
-      const { data: produtos, error: produtosError } = await supabase
+      const { data: produtosData, error: produtosError } = await supabase
         .from('produtos')
         .select('*')
         .eq('ativo', true);
 
       if (produtosError) throw produtosError;
-      if (!produtos) return [];
+      if (!produtosData) return [];
 
-      const estoque = await Promise.all(produtos.map(async (produto) => {
+      const estoqueData = await Promise.all(produtosData.map(async (produto) => {
         const { data: movimentacoes, error: movError } = await supabase
           .from('movimentacao_itens')
           .select(`
@@ -97,7 +97,7 @@ export const inventarioService = {
         };
       }));
 
-      const produtos = estoque
+      return estoqueData
         .filter((item): item is NonNullable<typeof item> => item !== null)
         .map((item): ProdutoEstoque => ({
           id: String(item.id),
@@ -111,8 +111,6 @@ export const inventarioService = {
           ultima_saida: item.ultima_saida,
           status: item.status as "normal" | "baixo" | "critico"
         }));
-
-      return produtos;
     } catch (error) {
       console.error('Erro ao listar estoque:', error);
       throw error;
