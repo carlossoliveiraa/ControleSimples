@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import EmojiPicker, { EmojiClickData, Theme } from 'emoji-picker-react';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -145,7 +145,7 @@ export function ChatInput({ onSendMessage, onSendFile }: ChatInputProps) {
             <EmojiPicker
               onEmojiClick={onEmojiClick}
               autoFocusSearch={false}
-              theme={document.documentElement.classList.contains('dark') ? 'dark' as const : 'light' as const}
+              theme={document.documentElement.classList.contains('dark') ? 'dark' as Theme : 'light' as Theme}
             />
           </div>
         )}

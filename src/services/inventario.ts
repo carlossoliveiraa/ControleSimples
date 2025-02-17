@@ -12,7 +12,7 @@ interface MovimentacaoItem {
   movimentacao: MovimentacaoData;
 }
 
-interface ProdutoEstoque {
+export interface ProdutoEstoque {
   id: string;
   nome: string;
   sku: string;
@@ -97,7 +97,22 @@ export const inventarioService = {
         };
       }));
 
-      return estoque.filter((item): item is ProdutoEstoque => item !== null);
+      const produtos = estoque
+        .filter((item): item is NonNullable<typeof item> => item !== null)
+        .map((item): ProdutoEstoque => ({
+          id: String(item.id),
+          nome: String(item.nome),
+          sku: String(item.sku),
+          quantidade_atual: Number(item.quantidade_atual),
+          quantidade_minima: Number(item.quantidade_minima),
+          valor_medio: Number(item.valor_medio),
+          valor_total: Number(item.valor_total),
+          ultima_entrada: item.ultima_entrada,
+          ultima_saida: item.ultima_saida,
+          status: item.status as "normal" | "baixo" | "critico"
+        }));
+
+      return produtos;
     } catch (error) {
       console.error('Erro ao listar estoque:', error);
       throw error;

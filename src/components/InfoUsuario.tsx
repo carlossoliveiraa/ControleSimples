@@ -25,6 +25,7 @@ export function InfoUsuario({
   const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const primeiraLetra = nome.charAt(0).toUpperCase();
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const validateName = (name: string) => {
     // Remove espaços extras e normaliza espaços duplos

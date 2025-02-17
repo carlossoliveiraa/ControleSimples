@@ -3,7 +3,7 @@ interface MensagemBalaoProps {
   texto: string;
   horario: string;
   remetente: string;
-  tipo: 'texto' | 'imagem' | 'audio';
+  tipo: "audio" | "texto" | "imagem" | "documento";
   conteudo?: string;
   reacoes?: Array<{
     emoji: string;

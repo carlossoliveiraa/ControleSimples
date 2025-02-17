@@ -249,6 +249,9 @@ export function EditarProduto() {
     return ((formData.preco_venda - formData.custo) / formData.custo) * 100;
   };
 
+  // Adicione verificação para custo undefined
+  const custoFormatado = formData.custo ? formataMoeda(formData.custo) : '0,00';
+
   return (
     <div>
       <FormHeader

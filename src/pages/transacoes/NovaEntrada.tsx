@@ -18,6 +18,10 @@ interface ProdutoLista {
   categoria: {
     nome: string;
   }[];
+  descricao?: string;
+  avatar_url?: string | null;
+  codigo_barras?: string;
+  categoria_id: string;
 }
 
 export function NovaEntrada() {
@@ -46,10 +50,18 @@ export function NovaEntrada() {
     }
   };
 
-  const handleProdutoSelect = (produto: Produto) => {
+  const handleProdutoSelect = (produto: ProdutoLista) => {
     setProdutosSelecionados(prev => [
       ...prev,
-      { ...produto, quantidade: 1, valor_unitario: produto.preco_venda }
+      {
+        ...produto,
+        quantidade: 1,
+        valor_unitario: produto.preco_venda,
+        descricao: produto.descricao || '',
+        avatar_url: produto.avatar_url || null,
+        codigo_barras: produto.codigo_barras || '',
+        categoria_id: produto.categoria_id
+      } as ProdutoSelecionado
     ]);
     setSearchTerm('');
     setProdutos([]);

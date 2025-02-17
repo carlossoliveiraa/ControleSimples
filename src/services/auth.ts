@@ -127,18 +127,16 @@ export const authService = {
       }
 
       // Atualizar último acesso silenciosamente
-      await supabase
-        .from('usuarios')
-        .update({ 
-          ultimo_acesso: new Date().toISOString() 
-        })
-        .eq('id', user.id)
-        .then(() => {
-          // sucesso
-        })
-        .catch((error: Error) => {
-          console.error('Erro ao atualizar último acesso:', error);
-        });
+      try {
+        await supabase
+          .from('usuarios')
+          .update({ 
+            ultimo_acesso: new Date().toISOString() 
+          })
+          .eq('id', user.id);
+      } catch (error) {
+        console.error('Erro ao atualizar último acesso:', error);
+      }
 
       return { user: userData, error: null };
     } catch (error: any) {

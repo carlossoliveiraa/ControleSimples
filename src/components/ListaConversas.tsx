@@ -35,9 +35,10 @@ const conversas: Conversa[] = [
 
 interface ListaConversasProps {
   onConversaSelect: (conversa: Conversa) => void;
+  onAvatarUpdate: (url: string | null) => void;
 }
 
-export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
+export function ListaConversas({ onConversaSelect, onAvatarUpdate }: ListaConversasProps) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
 
@@ -80,7 +81,7 @@ export function ListaConversas({ onConversaSelect }: ListaConversasProps) {
                   email={usuario.email}
                   avatar={usuario.avatar_url}
                   userId={usuario.id}
-                  onAvatarUpdate={handleAvatarUpdate}
+                  onAvatarUpdate={onAvatarUpdate}
                   onNameUpdate={handleNameUpdate}
                 />
               </div>
