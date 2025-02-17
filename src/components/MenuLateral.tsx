@@ -29,7 +29,11 @@ const MenuItem = ({ to, icon, label, badge, isActive }: MenuItemProps) => (
   </Link>
 );
 
-export function MenuLateral() {
+interface MenuLateralProps {
+  onClose?: () => void;
+}
+
+export function MenuLateral({ onClose }: MenuLateralProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { setIsAuthenticated, setUser } = useAuthStore();
@@ -41,8 +45,8 @@ export function MenuLateral() {
         text: "Você será desconectado do sistema",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#4A90E2',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Sim, sair',
         cancelButtonText: 'Cancelar'
       });
@@ -55,28 +59,32 @@ export function MenuLateral() {
       }
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao fazer logout',
-        text: 'Tente novamente.'
-      });
     }
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[280px] bg-white border-r border-gray-200 flex flex-col z-40">
-      {/* Logo */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#4A90E2] rounded flex items-center justify-center">
-            <span className="text-white font-bold">CS</span>
-          </div>
-          <span className="text-xl font-semibold text-[#4A90E2]">Controle Simples</span>
-        </div>
+    <aside className="h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+      {/* Header do Menu */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Sistema
+        </h1>
+        
+        {/* Botão fechar menu (mobile) */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
 
-      {/* Menu Items */}
-      <nav className="flex-1 overflow-y-auto p-4">
+      {/* Links do Menu */}
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
         <div className="mb-3">
           <span className="px-4 text-xs font-semibold text-gray-400 uppercase">Menu</span>
         </div>
@@ -190,16 +198,16 @@ export function MenuLateral() {
         />
       </div>
 
-      {/* Botão de Logout */}
-      <div className="p-4 border-t border-gray-200">
+      {/* Footer do Menu */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="w-full px-4 py-2 text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
         >
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span>Sair</span>
+          Sair
         </button>
       </div>
     </aside>

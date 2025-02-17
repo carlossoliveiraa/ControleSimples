@@ -26,6 +26,9 @@ import { CadastroCategoria } from './pages/CadastroCategoria'
 import { HeaderPerfil } from './components/HeaderPerfil'
 import { NovaEntrada } from './pages/transacoes/NovaEntrada'
 import { NovaSaida } from './pages/transacoes/NovaSaida'
+import { Configuracoes } from './pages/Configuracoes'
+import { Ajuda } from './pages/Ajuda'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 function Login() {
   const navigate = useNavigate();
@@ -256,52 +259,56 @@ function Login() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
-          
-          {/* Rotas públicas */}
-          <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
-          
-          {/* Rotas protegidas com layout base */}
-          <Route element={<RotaProtegida />}>
-            <Route element={<BaseLayout />}>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Principal />} />
-              <Route path="/perfil" element={<EditarPerfil />} />
-              <Route path="/chat" element={<Chat />} />
-              
-              {/* Rotas de Transações */}
-              <Route path="/transacoes" element={<Transacoes />} />
-              <Route path="/transacoes/entradas" element={<Entradas />} />
-              <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
-              <Route path="/transacoes/saidas" element={<Saidas />} />
-              <Route path="/transacoes/saidas/novo" element={<NovaSaida />} />
-              <Route path="/transacoes/inventario" element={<Inventario />} />
-              
-              {/* Outras rotas */}
-              <Route path="/clientes" element={<Clientes />} />
-              <Route path="/clientes/novo" element={<EditarCliente />} />
-              <Route path="/clientes/:id" element={<EditarCliente />} />
-              <Route path="/fornecedores" element={<Fornecedores />} />
-              <Route path="/fornecedores/novo" element={<EditarFornecedor />} />
-              <Route path="/fornecedores/:id" element={<EditarFornecedor />} />
-              <Route path="/produtos" element={<Produtos />} />
-              <Route path="/produtos/novo" element={<EditarProduto />} />
-              <Route path="/produtos/:id" element={<EditarProduto />} />
-              <Route path="/categorias" element={<Categorias />} />
-              <Route path="/categorias/nova" element={<CadastroCategoria />} />
-              <Route path="/categorias/:id" element={<CadastroCategoria />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+            
+            {/* Rotas públicas */}
+            <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
+            
+            {/* Rotas protegidas com layout base */}
+            <Route element={<RotaProtegida />}>
+              <Route element={<BaseLayout />}>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Principal />} />
+                <Route path="/perfil" element={<EditarPerfil />} />
+                <Route path="/chat" element={<Chat />} />
+                
+                {/* Rotas de Transações */}
+                <Route path="/transacoes" element={<Transacoes />} />
+                <Route path="/transacoes/entradas" element={<Entradas />} />
+                <Route path="/transacoes/entradas/novo" element={<NovaEntrada />} />
+                <Route path="/transacoes/saidas" element={<Saidas />} />
+                <Route path="/transacoes/saidas/novo" element={<NovaSaida />} />
+                <Route path="/transacoes/inventario" element={<Inventario />} />
+                
+                {/* Outras rotas */}
+                <Route path="/clientes" element={<Clientes />} />
+                <Route path="/clientes/novo" element={<EditarCliente />} />
+                <Route path="/clientes/:id" element={<EditarCliente />} />
+                <Route path="/fornecedores" element={<Fornecedores />} />
+                <Route path="/fornecedores/novo" element={<EditarFornecedor />} />
+                <Route path="/fornecedores/:id" element={<EditarFornecedor />} />
+                <Route path="/produtos" element={<Produtos />} />
+                <Route path="/produtos/novo" element={<EditarProduto />} />
+                <Route path="/produtos/:id" element={<EditarProduto />} />
+                <Route path="/categorias" element={<Categorias />} />
+                <Route path="/categorias/nova" element={<CadastroCategoria />} />
+                <Route path="/categorias/:id" element={<CadastroCategoria />} />
+                <Route path="/configuracoes" element={<Configuracoes />} />
+                <Route path="/ajuda" element={<Ajuda />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Rota 404 */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+            {/* Rota 404 */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
